@@ -20,7 +20,7 @@ client.connect(err => {
   const collection = client.db("cse10").collection("friendsData");
   //friends data Read
   app.get('/students', (req, res) => {
-    collection.find({})
+    collection.find({}).sort({"name": 1})
    .toArray((err, documents) => {
      res.send(documents);
    })
