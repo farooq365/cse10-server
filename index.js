@@ -11,6 +11,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
 
 const MongoClient = require('mongodb').MongoClient;
 
@@ -18,6 +19,7 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@clu
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
   const collection = client.db("cse10").collection("friendsData");
+  const usersDataCollection = client.db("cse10").collection("usersData");
   //friends data Read
   app.get('/students', (req, res) => {
     collection.find({}).sort({"name": 1})
@@ -33,6 +35,13 @@ client.connect(err => {
       res.redirect('https://cse10-pust.web.app/');
     })
   })
+  app.post('/user', (req, res) => {
+    const newUser = req.body;
+    usersDataCollection.insertOne(newUser)
+    .then(result => {
+      res.redirect('https://cse10-pust.web.app/');
+    })
+})
   //update student data
   app.get('/singleStudent/:id', (req, res) => {
     collection.find({_id: ObjectId(req.params.id)})
